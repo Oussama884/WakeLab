@@ -100,9 +100,7 @@ async function getData() {
   try {
     const res = await axios.get("http://localhost:3000/api/activites");
     const data = res.data;
-    console.log(data);
     affichage(data);
-   
     // Recherche
     let search = document.getElementById("Rechercher");
     search.addEventListener("input", () => {
@@ -125,13 +123,13 @@ async function getData() {
       affichage(resultatOption);
     });
 
-    modifer()
-
+   
+    ajouter(data)
+    modificationDuree()
+ modifer()
     supprimer(data);
-    // modificationDuree(data)
-    ajouter()
 
-    //ajouter
+   
    } catch (e) {
     console.log("error:" + e);
   }
@@ -139,9 +137,10 @@ async function getData() {
 //ajouter
 function ajouter(){
   let btnAjouter = document.getElementById("Ajouter");
-  console.log(btnAjouter);
+
   btnAjouter.addEventListener("click", async () => {
-    console.log("btn click");
+    console.log("btn est click")
+
     let nvActiviter = {
       auteur: document.getElementById("auteur").value,
       description: document.getElementById("Description").value,
@@ -150,11 +149,15 @@ function ajouter(){
       theme: document.getElementById("theme").value,
       titre: document.getElementById("titre").value,
     };
+    console.log(nvActiviter)
     try {
       await axios.post(`http://localhost:3000/api/activites`, nvActiviter);
+      const res=await axios.get("http://localhost:3000/api/activites")
+      const data=res.data
+      affichage(data)
     ;
 
-      affichage(data);
+      affichage();
       
 
       alert("valide");
@@ -165,8 +168,8 @@ function ajouter(){
 }
 
 //supprimer
-async function supprimer(data) {
-  //
+async function supprimer() {
+  
   let btnSupprimer = document.querySelectorAll(".suprimer");
   console.log(btnSupprimer)
   btnSupprimer.forEach((btn) => {
@@ -177,7 +180,9 @@ async function supprimer(data) {
       if (confirm("vous confimer supprimer cet activiter")) {
         try {
           await axios.delete(`http://localhost:3000/api/activites/${id}`);
-
+            const res= await axios.get("http://localhost:3000/api/activites")
+            const data=res.data
+            affichage(data)
           alert("deltetd est valide");
         } catch (e) {
           console.log("error:" + e);
@@ -188,18 +193,25 @@ async function supprimer(data) {
   });
 }
 //Modification
+let id;
+let btnM = document.getElementById("md");
 function modifer() {
   let btnModifer = document.querySelectorAll(".modifer");
-  let btnM = document.getElementById("md");
   btnModifer.forEach((btn) => {
-    let id = Number(btn.dataset.id);
-    btn.addEventListener("click", () => {
+
+   
+    btn.addEventListener("click", () => {  id = Number(btn.dataset.id);
+        console.log(id)
       document.getElementById("form").scrollIntoView({ behavior: "smooth" });
+     
     });
     console.log("btn :", btn);
     console.log(btnM);
-    btnM.addEventListener("click", async (e) => {
+  });
+  btnM.addEventListener("click", async (e) => {
+   
     e.preventDefault()
+    
       console.log(id);
       let modifer ={
         titre: document.getElementById("titre").value,
@@ -213,57 +225,60 @@ function modifer() {
       try {
     await axios.put(`http://localhost:3000/api/activites/${id}`,modifer);
       alert("modification est valide");
-        affichage();
+      const res=axios.get("http://localhost:3000/api/activites")
+      const data=res.data
+      affichage(data)
+        
         
       } catch (e) {
         console.log("error" + e);
         alert("non vlaide");
       }
     });
-  });
 }
-// function modificationDuree(data){
-//   let btnDurre=document.querySelectorAll(".modfier-duree")
-//   let btnModiferDurre=document.getElementById("modifeDuree")
-//   console.log("btn durre:"+ btnDurre)
 
-//   btnDurre.forEach(duree=>{
-   
-//        let id=Number(duree.dataset.id)
-//     duree.addEventListener("click",(e)=>{
-//       e.preventDefault() 
-//       console.log("duree:"+duree)
+let btnModiferDurre=document.getElementById("modifeDuree")
+let idDuree;
+function modificationDuree(){
+  let btnDurre=document.querySelectorAll(".modfier-duree")
+//   let btnModiferDurre=document.getElementById("md")
+ 
+  console.log("btn durre:"+ btnDurre)
+  btnDurre.forEach(btn=>{
+    
+    btn.addEventListener("click",(e)=>{
+     let idDuree=Number(btn.dataset.id)
+      e.preventDefault() 
+      console.log(idDuree)
       
-   
-//       document.getElementById("form").scrollIntoView({ behavior: "smooth" });
-//     })
-  
-//       btnModiferDurre.addEventListener("click",async()=>{
-//         console.log("btn est click")
-//       console.log(id)
-//       let idmodifer=data.find(el=>el.id===id)
-//       if(idmodifer){
-        
-        
-//       }
-      
-        
+      document.getElementById("form").scrollIntoView({ behavior: "smooth" });
+      btnModiferDurre.addEventListener("click",async()=>{
 
-      
-     
-//       try{
-//         await axios.patch(`http://localhost:3000/api/activites/${idmodifer}`,mdDuree)
-//         alert("modifcation duree est valide")
 
-//         affichage()
-//       }
-//       catch(e){
-//         console.log("error:"+e)
-//         alert("modification duree est invalide")
+        console.log(idDuree)
+        let md_duree={
+            duree:Number(document.getElementById("number").value)
+        }
+        try{
+            await axios.patch(`http://localhost:3000/api/activites/${idDuree}`,md_duree)
+            const resultat=await axios.get("http://localhost:3000/api/activites")
+            const data=resultat.data
+            affichage(data)
+            alert("valide")
 
-//       }
-//     })
-//   })    
-// }
-ajouter()
+        }
+        catch{
+            alert("non valide")
+        }
+    })
+    })
+})
+
+}
+
+
+
+// ajouter()
+modificationDuree()
+
 getData();

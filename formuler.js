@@ -1,6 +1,6 @@
 // let form=document.getElementById("form")
 // let inputs=form.querySelectorAll("input,select,textarea")
-// form.addEventListener("submit",validation)
+// form.addEventListener("input",validation)
 // function validation(event){
 //     event.preventDefault()
 //     inputs.forEach(input=>{
